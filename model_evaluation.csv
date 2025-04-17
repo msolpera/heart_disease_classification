@@ -1,0 +1,8 @@
+Modelo,Best Params,CV Accuracy,Validation Accuracy,Precision,Recall,F1 Score,ROC-AUC
+scv,"{'C': 10.0, 'kernel': 'linear'}",0.91449,0.87845,0.8750,0.9100,0.8922,0.8748
+logistic,"{'C': 1.0, 'solver': 'saga'}",0.91548,0.86188,0.8788,0.8700,0.8744,0.8609
+gaussian_nb,{'var_smoothing': 1e-05},0.88975,0.87293,0.9140,0.8500,0.8808,0.8756
+decisiontree,"{'criterion': 'entropy', 'max_depth': 5, 'max_features': 'sqrt', 'min_samples_leaf': 4, 'min_samples_split': 2}",0.8852,0.8343,0.8571,0.8400,0.8485,0.8336
+randomforest,"{'criterion': 'gini', 'max_depth': 10, 'n_estimators': 200}",0.9219,0.8895,0.8922,0.9100,0.9010,0.8871
+XGBC,"{'learning_rate': 0.1, 'n_estimators': 100}",0.9173,0.8785,0.9149,0.8600,0.8866,0.8806
+catboost,"{'depth': 6, 'iterations': 500, 'learning_rate': 0.01}",0.9286,0.8785,0.8900,0.8900,0.8900,0.8771
