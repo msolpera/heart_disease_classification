@@ -72,7 +72,7 @@ Models were evaluated using multiple metrics:
 - AUC-ROC: Area under the Receiver Operating Characteristic curve
 
 Cross-validation was employed to ensure robust performance assessment and avoid overfitting.
-Key Findings
+
 
 Requirements
 To run this project, the following libraries are required:
