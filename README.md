@@ -2,9 +2,6 @@
 This repository contains a comprehensive machine learning project focused on predicting heart disease using various classification algorithms. 
 The project follows a complete data science workflow including exploratory data analysis (EDA), data preprocessing, model training, and evaluation.
 
-## Overview
-Heart disease remains one of the leading causes of death globally. Early prediction of heart disease can significantly improve patient outcomes through timely interventions. 
-This project leverages machine learning techniques to build predictive models that can help identify individuals at risk of heart disease based on various health parameters.
 
 ## Project Workflow
 1. Data Preprocessing and EDA
@@ -17,11 +14,6 @@ This project leverages machine learning techniques to build predictive models th
    
 Multiple classification algorithms were implemented and compared:
 
-  - Support Vector Classifier (SVC)
-
-    - Implemented using sklearn's SVC class
-    - Explored both linear and non-linear kernels
-    - Optimized C parameter and gamma values through grid search
 
 - Logistic Regression
 
@@ -29,26 +21,10 @@ Multiple classification algorithms were implemented and compared:
     - Explored hyperparameters through grid search
     - Analyzed coefficient values to understand feature importance
 
-- Gaussian Naive Bayes
-
-    - Implemented using sklearn's GaussianNB
-    - Explored var_smoothing parameter with values ranging from 10^-11 to 10^-5 (7 logarithmically spaced values)
-
-- Decision Tree Classifier
-
-    - Built interpretable tree-based models
-    - Tuned parameters including max_depth and min_samples_split
-
 - Random Forest Classifier
 
     - Utilized ensemble learning approach with multiple decision trees
     - Optimized number of estimators and maximum features
-
-- XGBoost Classifier
-
-    - Implemented gradient boosting approach
-    - Fine-tuned learning rate and tree-specific parameters
-
 
 - CatBoost Classifier
 
