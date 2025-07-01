@@ -14,29 +14,14 @@ The project follows a complete data science workflow including exploratory data 
    
 Multiple classification algorithms were implemented and compared:
 
-
 - Logistic Regression
-
-    - Used as a baseline model due to its interpretability
-    - Explored hyperparameters through grid search
-    - Analyzed coefficient values to understand feature importance
 
 - Random Forest Classifier
 
-    - Utilized ensemble learning approach with multiple decision trees
-    - Optimized number of estimators and maximum features
-
 - CatBoost Classifier
 
-    - Specialized algorithm for handling categorical features
-    - Optimized for performance while controlling for overfitting
+- XGBoost 
 
-- PyCaret Implementation with CatBoost
-
-    - Leveraged PyCaret's automated machine learning capabilities specifically for CatBoost model
-    - Utilized PyCaret's simplified workflow for preprocessing, model training, and evaluation
-    - Streamlined hyperparameter tuning for the CatBoost model
-    - Benefited from PyCaret's pipeline approach for consistent preprocessing and model deployment
 
 ## Model Evaluation
 Models were evaluated using multiple metrics:
@@ -48,6 +33,33 @@ Models were evaluated using multiple metrics:
 - AUC-ROC: Area under the Receiver Operating Characteristic curve
 
 Cross-validation was employed to ensure robust performance assessment and avoid overfitting.
+
+
+### Best Model: CatBoost Classifier
+
+After testing multiple classifiers and performing hyperparameter tuning, the **CatBoostClassifier** achieved the best performance on the test set.
+
+**Best hyperparameters** (via RandomizedSearchCV):
+- `iterations`: 200
+- `learning_rate`: 0.01
+- `depth`: 5
+- `l2_leaf_reg`: 1
+- `border_count`: 255
+- `bagging_temperature`: 1.0
+- `random_strength`: 0
+- `subsample`: 1.0
+
+**Test set evaluation:**
+
+| Metric         | Value   |
+|----------------|---------|
+| Accuracy       | 0.8641  |
+| Precision      | 0.9020  |
+| Recall         | 0.8598  |
+| F1-Score       | 0.8804  |
+| ROC AUC        | 0.9322  |
+| Specificity    | 0.8701  |
+| NPV            | 0.8171  |
 ---
 
 The project is structure in the following way:
@@ -67,8 +79,12 @@ README.md: This file
 requirements.txt: Libraries needed to run this code.
 
 
-Requirements
-To run this project, the following libraries are required:
+To install dependencies:
+
+```bash
+pip install -r requirements.txt
+
+
 
 [![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
 

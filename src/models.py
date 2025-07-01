@@ -1,7 +1,9 @@
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
 from catboost import CatBoostClassifier
+from xgboost import XGBClassifier
 from sklearn.model_selection import cross_val_score
 import numpy as np
 import pandas as pd
@@ -33,7 +35,7 @@ def split_data(X, y, test_size=0.2, random_state=42):
     return train_test_split(X, y, test_size=test_size, random_state=random_state)
 
 
-def select_best_model(X_train, y_train, models, cv=5, scoring='accuracy', random_state=42):
+def select_best_model(X_train, y_train, models, cv=5, scoring='f1', random_state=42):
     """
     Select the best model using cross-validation.
     
@@ -51,30 +53,13 @@ def select_best_model(X_train, y_train, models, cv=5, scoring='accuracy', random
     """
     
     # Define model configurations
+
     model_configs = {
-        "random_forest": RandomForestClassifier(
-            n_estimators=100,
-            max_depth=10,
-            min_samples_split=5,
-            min_samples_leaf=2,
-            random_state=random_state
-        ),
-        "RNN": MLPClassifier(
-            hidden_layer_sizes=(100, 50),
-            max_iter=1000,
-            alpha=0.01,
-            random_state=random_state,
-            early_stopping=True,
-            validation_fraction=0.1
-        ),
-        "Catboost": CatBoostClassifier(
-            iterations=100,
-            depth=6,
-            learning_rate=0.1,
-            random_seed=random_state,
-            verbose=False
-        )
-    }
+        "logistic_regressor": LogisticRegression(max_iter=1000, random_state=random_state),
+        "random_forest": RandomForestClassifier(random_state=random_state),
+        "xgboost": XGBClassifier(eval_metric='logloss', random_state=random_state),
+        "Catboost": CatBoostClassifier(verbose=False, random_seed=random_state)
+        }
     
     results = {}
     best_score = -1
@@ -85,9 +70,6 @@ def select_best_model(X_train, y_train, models, cv=5, scoring='accuracy', random
     print("-" * 50)
     
     for model_name in models:
-        if model_name not in model_configs:
-            print(f"Warning: Model '{model_name}' not found in configurations. Skipping.")
-            continue
             
         model = model_configs[model_name]
         
@@ -101,7 +83,7 @@ def select_best_model(X_train, y_train, models, cv=5, scoring='accuracy', random
             'cv_scores': cv_scores
         }
         
-        print(f"{model_name:15} | CV Score: {cv_scores.mean():.4f} (+/- {cv_scores.std() * 2:.4f})")
+        print(f"{model_name:15} | CV Score {scoring}: {cv_scores.mean():.4f} (+/- {cv_scores.std() * 2:.4f})")
         
         # Track best model
         if cv_scores.mean() > best_score:
@@ -110,7 +92,7 @@ def select_best_model(X_train, y_train, models, cv=5, scoring='accuracy', random
             best_model_name = model_name
     
     print("-" * 50)
-    print(f"Best Model: {best_model_name} with CV Score: {best_score:.4f}")
+    print(f"Best Model: {best_model_name} with CV Score ({scoring}): {best_score:.4f}")
     
     # Train the best model on full training data
     best_model.fit(X_train, y_train)
@@ -133,8 +115,6 @@ def tune_catboost_hyperparameters(X_train, y_train,
     Args:
         X_train (pd.DataFrame): Training features
         y_train (pd.Series): Training target
-        X_val (pd.DataFrame, optional): Validation features set
-        y_val (pd.Series, optional): Validation target set
         n_iter (int): Number of iterations for RandomizedSearchCV
         random_state (int): Random state for reproducibility
         verbose (bool): Whether to print detailed results
@@ -158,10 +138,7 @@ def tune_catboost_hyperparameters(X_train, y_train,
     
     # Base model configuration
     base_model = CatBoostClassifier(
-        random_seed=random_state,
         verbose=False,
-        eval_metric='Accuracy',
-        early_stopping_rounds=50 
     )
     
     print(f"Starting hyperparameter tuning for CatBoost...")
@@ -175,7 +152,7 @@ def tune_catboost_hyperparameters(X_train, y_train,
             param_distributions=param_distributions,
             n_iter=n_iter,
             cv=cv,
-            scoring='accuracy',
+            scoring='f1',
             n_jobs=-1,
             random_state=random_state,
             verbose=1 if verbose else 0
@@ -204,7 +181,7 @@ def tune_catboost_hyperparameters(X_train, y_train,
         print("BEST PARAMETERS:")
         for param, value in search.best_params_.items():
             print(f"  {param:20}: {value}")
-        print(f"\nBest CV Score: {search.best_score_:.4f}")
+        print(f"\nBest CV Score (F1): {search.best_score_:.4f}")
 
     
     return best_model, search_results
