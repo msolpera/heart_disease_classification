@@ -53,27 +53,37 @@ def plot_distributions(df):
     plt.show()
 
 
-def string_num_cols(df):
+def string_num_cols(df, target):
     """
-    Separate categorical and numerical columns
+    Separate categorical and numerical feature names, excluding the target column.
+
     Args:
         df (pd.DataFrame): Input DataFrame.
+        target (str): Name of the target column to exclude.
+
     Returns:
-        cat_features, num_features (Python lists): lists of cat/num features names
+        cat_features (list): List of categorical feature names.
+        num_features (list): List of numerical feature names.
     """
-    # Transform object type to string type
-    string_col = df.select_dtypes("object").columns
-    df[string_col]=df[string_col].astype("string")
+    df_copy = df.copy()
 
-    cat_features=df.select_dtypes("string").columns.to_list()
-    num_features=df.columns.to_list()
+    # Convert 'object' columns to 'string' dtype
+    string_cols = df_copy.select_dtypes(include="object").columns
+    df_copy[string_cols] = df_copy[string_cols].astype("string")
 
-    for col in cat_features:
-        num_features.remove(col)
+    # Identify categorical and numerical features
+    cat_features = df_copy.select_dtypes(include="string").columns.to_list()
+    num_features = df_copy.select_dtypes(include=["int", "float", "number"]).columns.to_list()
+
+    # Remove the target column
+    if target in cat_features:
+        cat_features.remove(target)
+    if target in num_features:
+        num_features.remove(target)
     return cat_features, num_features
 
 
-def describe_num_cols(df, num_features):
+def describe_num_cols(df, num_features, target):
     """
     Display statistical summary and correlation matrix
     
@@ -87,10 +97,14 @@ def describe_num_cols(df, num_features):
     
     print(f"\nCorrelation Matrix:")
     print("="*50)
+
+    cols = num_features.copy()
+    if target not in cols:
+        cols.append(target)
     
     # Crear heatmap
     fig = px.imshow(
-        df[num_features].corr(),
+        df[cols].corr(),
         title="Correlation Matrix of Numerical Features",
         color_continuous_scale="RdBu_r",
         aspect="auto"

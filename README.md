@@ -1,5 +1,5 @@
 # Heart Disease Prediction Project
-This repository contains a comprehensive machine learning project focused on predicting heart disease using various classification algorithms. 
+This repository contains a machine learning project focused on predicting heart disease using various classification algorithms. 
 The project follows a complete data science workflow including exploratory data analysis (EDA), data preprocessing, model training, and evaluation.
 
 
@@ -48,6 +48,23 @@ Models were evaluated using multiple metrics:
 - AUC-ROC: Area under the Receiver Operating Characteristic curve
 
 Cross-validation was employed to ensure robust performance assessment and avoid overfitting.
+---
+
+The project is structure in the following way:
+
+main.ipynb: Jupyter notebook where load the data, train the model, and visualize the results.
+
+src/: Contains all the modular code used in the project:
+
+- eda.py: Performs exploratory data analysis.
+- preprocessing.py: Data cleaning and Pipeline that imputes missing values, encodes categorical variables using one-hot encoding, and scales numerical variables using MinMaxScaler. Optionally, the pipeline can be fitted immediately on the provided data.
+- models.py: Model training, evaluation, and performance metrics
+- predict.py: Allows the user to make predictions on new data.
+data/: Contains the original CSVs.
+
+README.md: This file
+
+requirements.txt: Libraries needed to run this code.
 
 
 Requirements

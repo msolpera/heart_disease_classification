@@ -11,8 +11,10 @@ from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score,
     roc_auc_score, confusion_matrix, classification_report,
-    roc_curve, precision_recall_curve
+    roc_curve, precision_recall_curve, average_precision_score
 )
+
+
 
 def split_data(X, y, test_size=0.2, random_state=42):
     """
@@ -144,13 +146,13 @@ def tune_catboost_hyperparameters(X_train, y_train,
     
     # Define hyperparameter space
     param_distributions = {
-        'iterations': [100, 200, 300, 500],
-        'learning_rate': [0.01, 0.05, 0.1, 0.15, 0.2],
-        'depth': [4, 5, 6, 7, 8, 9, 10],
-        'l2_leaf_reg': [1, 3, 5, 7, 9],
+        'iterations': [100, 200],
+        'learning_rate': [0.01, 0.05, 0.1, 0.15],
+        'depth': [4, 5, 6, 7, 8],
+        'l2_leaf_reg': [1, 3, 5],
         'border_count': [32, 64, 128, 255],
         'bagging_temperature': [0, 0.5, 1.0, 2.0],
-        'random_strength': [0, 0.5, 1.0, 2.0],
+        'random_strength': [0, 0.5, 1.0],
         'subsample': [0.8, 0.9, 1.0]
     }
     
@@ -208,14 +210,14 @@ def tune_catboost_hyperparameters(X_train, y_train,
     return best_model, search_results
 
 
-def evaluate_model(model, X_test, y_test, plot_curves=True, class_names=None):
+def evaluate_model(model, X, y, plot_curves=True, class_names=None):
     """
     Comprehensive evaluation of a classification model.
     
     Args:
         model: Trained classification model
-        X_test (pd.DataFrame): Test features
-        y_test (pd.Series): Test target
+        X (pd.DataFrame): features
+        y (pd.Series): target
         plot_curves (bool): Whether to plot ROC and PR curves
         class_names (list): Names for classes (default: [0, 1])
         
@@ -227,20 +229,20 @@ def evaluate_model(model, X_test, y_test, plot_curves=True, class_names=None):
         class_names = ['No Heart Disease', 'Heart Disease']
     
     # Make predictions
-    y_pred = model.predict(X_test)
-    y_pred_proba = model.predict_proba(X_test)[:, 1] if hasattr(model, 'predict_proba') else None
+    y_pred = model.predict(X)
+    y_pred_proba = model.predict_proba(X)[:, 1] if hasattr(model, 'predict_proba') else None
     
     # Calculate metrics
-    accuracy = accuracy_score(y_test, y_pred)
-    precision = precision_score(y_test, y_pred)
-    recall = recall_score(y_test, y_pred)
-    f1 = f1_score(y_test, y_pred)
+    accuracy = accuracy_score(y, y_pred)
+    precision = precision_score(y, y_pred)
+    recall = recall_score(y, y_pred)
+    f1 = f1_score(y, y_pred)
     
     # ROC AUC (only if probabilities available)
-    roc_auc = roc_auc_score(y_test, y_pred_proba) if y_pred_proba is not None else None
+    roc_auc = roc_auc_score(y, y_pred_proba) if y_pred_proba is not None else None
     
     # Confusion Matrix
-    cm = confusion_matrix(y_test, y_pred)
+    cm = confusion_matrix(y, y_pred)
     
     # Calculate additional metrics from confusion matrix
     tn, fp, fn, tp = cm.ravel()
@@ -257,7 +259,7 @@ def evaluate_model(model, X_test, y_test, plot_curves=True, class_names=None):
         'npv': npv,
         'roc_auc': roc_auc,
         'confusion_matrix': cm,
-        'classification_report': classification_report(y_test, y_pred, target_names=class_names)
+        'classification_report': classification_report(y, y_pred, target_names=class_names)
     }
     
     # Print results
@@ -294,7 +296,7 @@ def evaluate_model(model, X_test, y_test, plot_curves=True, class_names=None):
         axes[0].set_ylabel('Actual')
         
         # 2. ROC Curve
-        fpr, tpr, _ = roc_curve(y_test, y_pred_proba)
+        fpr, tpr, _ = roc_curve(y, y_pred_proba)
         axes[1].plot(fpr, tpr, color='darkorange', lw=2, 
                     label=f'ROC Curve (AUC = {roc_auc:.3f})')
         axes[1].plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--', alpha=0.5)
@@ -307,12 +309,12 @@ def evaluate_model(model, X_test, y_test, plot_curves=True, class_names=None):
         axes[1].grid(True, alpha=0.3)
         
         # 3. Precision-Recall Curve
-        precision_curve, recall_curve, _ = precision_recall_curve(y_test, y_pred_proba)
-        pr_auc = np.trapz(precision_curve, recall_curve)
+        precision_curve, recall_curve, _ = precision_recall_curve(y, y_pred_proba)
+        pr_auc = average_precision_score(y, y_pred_proba)
         axes[2].plot(recall_curve, precision_curve, color='green', lw=2,
                     label=f'PR Curve (AUC = {pr_auc:.3f})')
-        axes[2].axhline(y=y_test.mean(), color='red', linestyle='--', alpha=0.5,
-                       label=f'Baseline ({y_test.mean():.3f})')
+        axes[2].axhline(y=y.mean(), color='red', linestyle='--', alpha=0.5,
+                       label=f'Baseline ({y.mean():.3f})')
         axes[2].set_xlim([0.0, 1.0])
         axes[2].set_ylim([0.0, 1.05])
         axes[2].set_xlabel('Recall')
