@@ -65,13 +65,14 @@ After testing multiple classifiers and performing hyperparameter tuning, the **C
 The project is structure in the following way:
 
 main.ipynb: Jupyter notebook where load the data, train the model, and visualize the results.
-
+predict.py: Allows the user to make predictions on new data.
+  
 src/: Contains all the modular code used in the project:
 
 - eda.py: Performs exploratory data analysis.
 - preprocessing.py: Data cleaning and Pipeline that imputes missing values, encodes categorical variables using one-hot encoding, and scales numerical variables using MinMaxScaler. Optionally, the pipeline can be fitted immediately on the provided data.
 - models.py: Model training, evaluation, and performance metrics
-- predict.py: Allows the user to make predictions on new data.
+
 data/: Contains the original CSVs.
 
 README.md: This file
@@ -85,6 +86,50 @@ To install dependencies:
 pip install -r requirements.txt
 ```
 
+##  How to run the project
+
+Clone this repository:
+
+
+git clone [https://github.com/msolpera/salary_prediction/.git](https://github.com/msolpera/heart_disease_classification.git)
+
+cd heart_disease_classification
+
+python -m venv venv
+
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+pip install -r requirements.txt
+
+## CSV Format for Predictions
+
+To generate predictions on new data, you must provide a CSV file (e.g., `new_data.csv`) located in the `data/` folder.
+
+The file must include **only the following columns**, with **exact same column names** as during training:
+
+`Age`                 int64
+
+`Sex`                object
+
+`ChestPainType`      object
+
+`RestingBP`           int64
+
+`Cholesterol`         int64
+
+`FastingBS`           int64
+
+`RestingECG`         object
+
+`MaxHR`               int64
+
+`ExerciseAngina`     object
+
+`Oldpeak`           float64
+
+`ST_Slope`           object
+
+---
 
 
 [![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
@@ -101,6 +146,6 @@ pip install -r requirements.txt
 
 [![CatBoost](https://img.shields.io/badge/CatBoost-FFB13B?style=for-the-badge&logo=python&logoColor=black)](https://catboost.ai/)
 
-[![PyCaret](https://img.shields.io/badge/PyCaret-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://pycaret.org/)
+<!-- [![PyCaret](https://img.shields.io/badge/PyCaret-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://pycaret.org/) -->
 
 
