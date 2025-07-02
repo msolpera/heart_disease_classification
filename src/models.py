@@ -7,6 +7,7 @@ from xgboost import XGBClassifier
 from sklearn.model_selection import cross_val_score
 import numpy as np
 import pandas as pd
+import time
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import RandomizedSearchCV
@@ -100,11 +101,6 @@ def select_best_model(X_train, y_train, models, cv=5, scoring='f1', random_state
     return best_model, results
 
 
-
-
-from sklearn.metrics import classification_report, confusion_matrix
-
-import time
 
 def tune_catboost_hyperparameters(X_train, y_train, 
                                   cv=5, n_iter=50, 
